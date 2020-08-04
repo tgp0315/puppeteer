@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const fs = require("fs");
 (async () => {
-  const browser = await puppeteer.launch({args: ["--no-sandbox"], headless: false, devtools: true});
+  const browser = await puppeteer.launch({args: ["--no-sandbox", "--start-maximized"], headless: false, devtools: true});
   const page = await browser.newPage();
   await page.setViewport({
     width: 2000,
@@ -21,7 +21,6 @@ const fs = require("fs");
   const selectedSongHref = await iframe.evaluate(e => {
     // console.log(e.childNodes);
     const songList = Array.from(e.childNodes);
-    console.log(111111111, songList);
     const idx = songList.findIndex(v => v.childNodes[1].innerText.replace(/\s/g, "") === "可不可以");
     return songList[idx].childNodes[1].firstChild.firstChild.firstChild.href;
   }, SONG_LIST)
@@ -48,9 +47,9 @@ const fs = require("fs");
   const commentCount = await iframe.$eval(".sub.s-fc3", e => e.innerText);
   console.log(commentCount)
   // 获取评论
-  const commentList = await iframe.$eval('.m-cmmt .cmmts .itm', elements => {
-    const ctn = elements.map(v => {
-      return v.innerText.replace(/\s/g, '');
+  const commentList = await iframe.$eval(".itm", e => {
+    const ctn = e.map(v => {
+      return v.innerText.replace(/\s/g, "");
     });
     return ctn;
   });
